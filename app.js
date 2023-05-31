@@ -29,9 +29,10 @@ app.use((req, res, next) => {
 //   resp.send('You can post to this endpoint');
 // });
 
-const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`, 'utf8'));
-
 // 2) Route handlers
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`, 'utf8'));
+const users = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/users.json`, 'utf8'));
+
 function getAllTours(req, res) {
   res.status(200).json({
     status: 'success',
@@ -105,16 +106,89 @@ function deleteTour(req, res) {
   });
 }
 
-//app.get('/api/v1/tours', getAllTours);
-// app.post('/api/v1/tours', createTour);
-// app.get('/api/v1/tours/:id', getTour);
-// app.patch('/api/v1/tours/:id', updateTour);
-// app.delete('/api/v1/tours/:id', deleteTour);
+function getAllUsers(req, res) {
+  if (!res) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'User not found',
+    });
+  }
+  res.status(200).json({
+    status: 'success',
+    data: {
+      users,
+    },
+  });
+}
 
+function getUser(req, res) {
+  const userName = req.params.name[0].toUpperCase() + req.params.name.toLowerCase().slice(1);
+  const user = users.find(user => user.name.includes(userName));
+  if (!user) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'User not found',
+    });
+  }
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user,
+    },
+  });
+}
+
+function createUser(req, res) {
+  if (!res) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'User not found',
+    });
+  }
+  res.status(200).json({
+    status: 'success',
+    data: {
+      users,
+    },
+  });
+}
+
+function updateUser(req, res) {
+  if (!res) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'User not found',
+    });
+  }
+  res.status(200).json({
+    status: 'success',
+    data: {
+      users,
+    },
+  });
+}
+function deleteUser(req, res) {
+  if (!res) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'User not found',
+    });
+  }
+  res.status(200).json({
+    status: 'success',
+    data: {
+      users,
+    },
+  });
+}
 // 3) Routes
 app.route('/api/v1/tours').get(getAllTours).post(createTour);
 
 app.route('/api/v1/tours/:id').get(getTour).patch(updateTour).delete(deleteTour);
+
+app.route('/api/v1/users').get(getAllUsers).post(createUser);
+
+app.route('/api/v1/user/:name').get(getUser).patch(updateUser).delete(deleteUser);
 
 // 4) Start server
 
