@@ -1,7 +1,12 @@
 const express = require('express');
 const fs = require('fs');
+const morgan = require('morgan');
 
 const app = express();
+
+// 1) Middlawares
+app.use(morgan('dev'));
+
 app.use(express.json()); //middleware
 
 app.use((req, res, next) => {
@@ -24,13 +29,9 @@ app.use((req, res, next) => {
 //   resp.send('You can post to this endpoint');
 // });
 
-const port = 3000;
-app.listen(port, () => {
-  console.log(`App ruining on port ${port}...`);
-});
-
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`, 'utf8'));
 
+// 2) Route handlers
 function getAllTours(req, res) {
   res.status(200).json({
     status: 'success',
@@ -110,6 +111,14 @@ function deleteTour(req, res) {
 // app.patch('/api/v1/tours/:id', updateTour);
 // app.delete('/api/v1/tours/:id', deleteTour);
 
+// 3) Routes
 app.route('/api/v1/tours').get(getAllTours).post(createTour);
 
 app.route('/api/v1/tours/:id').get(getTour).patch(updateTour).delete(deleteTour);
+
+// 4) Start server
+
+const port = 3000;
+app.listen(port, () => {
+  console.log(`App ruining on port ${port}...`);
+});
