@@ -76,7 +76,8 @@ tourSchema.virtual('durationWeeks').get(function () {
 });
 
 // tourSchema.virtual('durationWeeks').get(() => this.duration / 7); //we need to use a normal function due to the 'this'
-// document middleware: runs before .save() and .create()
+
+// DOCUMENT MIDLEWARE: runs before .save() and .create()
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
@@ -92,7 +93,7 @@ tourSchema.pre('save', function (next) {
 //   next();
 // });
 
-//Query middlaware
+//QUERY MIDLEWARE
 // tourSchema.pre(find, function (next) { regex para selecionar tudo q começa com find
 tourSchema.pre(/^find/, function (next) {
   this.start = Date.now();
@@ -101,6 +102,13 @@ tourSchema.pre(/^find/, function (next) {
 });
 tourSchema.post(/^find/, function (next) {
   console.log(`Your query took ${Date.now() - this.start} milliseconds!`);
+  next();
+});
+//AGGREGATION MIDLEWARE
+
+tourSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  console.log('aggregate middleware test ', this.pipeline());
   next();
 });
 
