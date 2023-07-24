@@ -60,6 +60,10 @@ const tourSchema = new mongoose.Schema(
     startDates: {
       type: [Date],
     },
+    secretTour: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -87,6 +91,18 @@ tourSchema.pre('save', function (next) {
 //   console.log(doc);
 //   next();
 // });
+
+//Query middlaware
+// tourSchema.pre(find, function (next) { regex para selecionar tudo q começa com find
+tourSchema.pre(/^find/, function (next) {
+  this.start = Date.now();
+  this.find({ secretTour: { $ne: true } });
+  next();
+});
+tourSchema.post(/^find/, function (next) {
+  console.log(`Your query took ${Date.now() - this.start} milliseconds!`);
+  next();
+});
 
 const Tour = mongoose.model('Tour', tourSchema); //creating the module
 
