@@ -2,3 +2,4 @@
 config.env
 tmpnodejsnpm-cache
 node_modules
+.vercel
